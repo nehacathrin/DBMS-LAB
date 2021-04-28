@@ -1,0 +1,60 @@
+create database Book_dealer;
+use Book_dealer;
+create table AUTHOR( author_id int primary key, name varchar(30), city varchar(20), country varchar(20));
+create table PUBLISHER( publisher_id int primary key, name varchar(30), city varchar(20), country varchar(20));
+
+create table CATEGORY( category_id int, description varchar(50), primary key(category_id));
+
+create table CATALOG( book_id int, title varchar(30), author_id int, publisher_id int, category_id int, year int, price int, 
+primary key(book_id), foreign key(author_id) references AUTHOR(author_id), foreign key(publisher_id) references PUBLISHER(publisher_id),
+ foreign key(category_id) references CATEGORY(category_id));
+ 
+create table ORDER_DETAILS( order_no int primary key, book_id int, quantity int, foreign key(book_id) references CATALOG(book_id));
+show tables;
+
+insert into AUTHOR values(1001,"Teras Chan","CA","USA");
+insert into AUTHOR values(1002,"Stevens","Zombi","Uganda");
+insert into AUTHOR values(1003,"M Mano","Cair","Canada");
+insert into AUTHOR values(1004,"karthik BP","New York","USA");
+insert into AUTHOR values(1005,"William Stallings","Las Vegas","USA");
+select * from AUTHOR;
+
+insert into PUBLISHER values(1,"Pearson","New York","USA");
+insert into PUBLISHER values(2,"EEE","New South Vales","USA");
+insert into PUBLISHER values(3,"PHI","Delhi","India");
+insert into PUBLISHER values(4,"Willy","Berlin","Germany");
+insert into PUBLISHER values(5,"MGH","New York","USA");
+select * from PUBLISHER;
+
+insert into CATEGORY values(1001,"computer science");
+insert into CATEGORY values(1002,"algorithm design");
+insert into CATEGORY values(1003,"electronics");
+insert into CATEGORY values(1004,"programming");
+insert into CATEGORY values(1005,"operating system");
+select * from CATEGORY;
+
+insert into CATALOG values(11,"unix system prg",1001,1,1001,2000,251);
+insert into CATALOG values(12,"digital signals",1002,2,1003,2001,425);
+insert into CATALOG values(13,"logic design",1003,3,1002,1999,225);
+insert into CATALOG values(14,"server prg",1004,4,1004,2001,333);
+insert into CATALOG values(15,"linux os",1005,5,1005,2003,326);
+insert into CATALOG values(16,"c++ bible",1005,5,1001,2000,526);
+insert into CATALOG values(17,"cobol landbook",1005,4,1001,2000,658);
+select * from CATALOG;
+
+insert into ORDER_DETAILS values(1,11,5);
+insert into ORDER_DETAILS values(2,12,8);
+insert into ORDER_DETAILS values(3,13,15);
+insert into ORDER_DETAILS values(4,14,22);
+insert into ORDER_DETAILS values(5,15,3);
+select * from ORDER_DETAILS;
+
+select A.name,C.title,C.price from AUTHOR A,CATALOG C where C.author_id=A.author_id and C.year>=2000 and 
+A.name=(select A.name from AUTHOR A,CATALOG C where A.author_id=C.author_id group by C.author_id having count(*)>=2);
+
+select A.name from AUTHOR A,CATALOG C,ORDER_DETAILS O where O.book_id=C.book_id and A.author_id=C.author_id
+ and O.book_id=(select book_id from ORDER_DETAILS where quantity=(select max(quantity) from ORDER_DETAILS));
+ 
+ update CATALOG set price=price+(10*price/100)  where publisher_id=5 ;
+select * from CATALOG;
+ 
